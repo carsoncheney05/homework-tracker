@@ -50,6 +50,38 @@ void _showAddAssignmentDialog() {
   );
 }
 
+void editAssignment(int index) {
+  final TextEditingController textController = TextEditingController(
+    text: _assignments[index]['title']
+  );
+  showDialog(
+    context: context, builder: (context) {
+      return AlertDialog(
+        title: const Text('Edit Assignment Title'),
+        content: TextField(
+          autofocus: true,
+          decoration: const InputDecoration(hintText: "Enter Edited Assignment Name"),
+          controller: textController,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              if (textController.text.trim().isNotEmpty) {
+                setState(() {
+                  _assignments[index]['title'] = textController.text.trim();
+                  });
+              } 
+              Navigator.pop(context);
+            },
+            child: const Text('Save'),)
+    ]);
+  });
+}
+
 void _toggleCompleted(int index, bool? value) {
   setState(() {
     _assignments[index]['completed'] = value ?? false;
@@ -62,14 +94,30 @@ Widget build(BuildContext context) {
     appBar: AppBar(title: const Text('Assignments')),
     body: ListView.builder(
       itemCount: _assignments.length,
-      itemBuilder: (context, index) {
-        return CheckboxListTile(
-          title: Text(_assignments[index]['title']),
-          value: _assignments[index]['completed'],
-          onChanged: (value) => _toggleCompleted(index, value),
-        );
-      },
-    ),
+      itemBuilder: (context, index) { 
+        return ListTile(
+          title: Row(
+            children: [
+              Checkbox(
+                value: _assignments[index]['completed'],
+                onChanged: (value) => _toggleCompleted(index, value),
+              ),
+              IconButton(
+                icon: const Icon(Icons.edit, size: 20, color: Colors.grey),
+                onPressed: () => editAssignment(index),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  _assignments[index]['title'],
+                  style: TextStyle(decoration: _assignments[index]['completed']
+                      ? TextDecoration.lineThrough
+                      : null,)
+                ))
+            ]
+          )
+        ); }
+        ),
     floatingActionButton: FloatingActionButton(
       onPressed: _showAddAssignmentDialog,
       child: const Icon(Icons.add),
