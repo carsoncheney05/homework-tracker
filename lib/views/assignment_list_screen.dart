@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../presenters/assignment_presenter.dart';
 
 class AssignmentListScreen extends StatefulWidget {
   const AssignmentListScreen({super.key});
@@ -9,7 +10,14 @@ class AssignmentListScreen extends StatefulWidget {
 
 class _AssignmentListScreenState extends State<AssignmentListScreen> {
   
-  final List<Map<String, dynamic>> _assignments = [];
+  final AssignmentPresenter _presenter = AssignmentPresenter();
+  final TextEditingController textController = TextEditingController();
+
+  @override
+  void dispose() {
+      textController.dispose();
+      super.dispose();
+  }
 
 
 void _showAddAssignmentDialog() {
@@ -34,26 +42,18 @@ void _showAddAssignmentDialog() {
           onPressed: () {
             if (newAssignmentTitle.trim().isNotEmpty) {
               setState(() {
-                _assignments.add({
-                  'title': newAssignmentTitle.trim(),
-                  'completed': false,
+                _presenter.addAssignment(newAssignmentTitle.trim());
                 });
-              });
             }
-            Navigator.pop(context); //close dialog
-          },
-          child: const Text('Add'),
-        ),
-      ],
-      );
-    },
-  );
-}
+            Navigator.pop(context); }, //close dialog
+          
+          child: const Text('Add'),) ]);});
+          }
 
-void editAssignment(int index) {
-  final TextEditingController textController = TextEditingController(
-    text: _assignments[index]['title']
-  );
+
+void _showEditAssignment(int index) {
+  textController.text = _presenter.assignments[index].title;
+
   showDialog(
     context: context, builder: (context) {
       return AlertDialog(
@@ -72,7 +72,7 @@ void editAssignment(int index) {
             onPressed: () {
               if (textController.text.trim().isNotEmpty) {
                 setState(() {
-                  _assignments[index]['title'] = textController.text.trim();
+                  _presenter.assignments[index].title = textController.text.trim();
                   });
               } 
               Navigator.pop(context);
@@ -82,35 +82,32 @@ void editAssignment(int index) {
   });
 }
 
-void _toggleCompleted(int index, bool? value) {
-  setState(() {
-    _assignments[index]['completed'] = value ?? false;
-  });
-}
-
 @override
 Widget build(BuildContext context) {
+  final assignments = _presenter.assignments;
+
   return Scaffold(
     appBar: AppBar(title: const Text('Assignments')),
     body: ListView.builder(
-      itemCount: _assignments.length,
-      itemBuilder: (context, index) { 
+      itemCount: assignments.length,
+      itemBuilder: (context, index) {
+        final assignment = assignments[index];
         return ListTile(
           title: Row(
             children: [
               Checkbox(
-                value: _assignments[index]['completed'],
-                onChanged: (value) => _toggleCompleted(index, value),
-              ),
+                value: assignment.isCompleted,
+                onChanged: (value) {setState(() {_presenter.toggleCompleted(index); });
+              }),
               IconButton(
                 icon: const Icon(Icons.edit, size: 20, color: Colors.grey),
-                onPressed: () => editAssignment(index),
+                onPressed: () => _showEditAssignment(index),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  _assignments[index]['title'],
-                  style: TextStyle(decoration: _assignments[index]['completed']
+                  assignment.title,
+                  style: TextStyle(decoration: assignment.isCompleted
                       ? TextDecoration.lineThrough
                       : null,)
                 ))
@@ -123,5 +120,4 @@ Widget build(BuildContext context) {
       child: const Icon(Icons.add),
       ),
     );
-}
-}
+}}
