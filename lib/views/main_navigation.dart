@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../home_screen.dart';
 import '../../views/assignment_list_screen.dart';
 import 'course_list_screen.dart';
+import 'profile_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -17,6 +18,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     const HomeScreen(),
     const AssignmentListScreen(),
     const CourseListScreen(),
+    ProfileScreen()
   ];
 
   void _onItemTapped(int index) {
@@ -30,6 +32,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.purple,
+        unselectedItemColor: Colors.grey,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
@@ -43,6 +47,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.book),
             label: 'Courses'
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
           )
         ],
       ),
