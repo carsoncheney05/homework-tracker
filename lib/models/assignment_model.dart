@@ -5,10 +5,12 @@ class Assignment {
   String? id;
   String title;
   bool isCompleted;
+  final String courseName;
 
   Assignment({
     this.id,
     required this.title,
+    required this.courseName,
     this.isCompleted = false,
   });
 
@@ -30,6 +32,7 @@ class Assignment {
           Assignment(
             id: key,
             title: value['title'],
+            courseName: value['courseName'] ?? 'Unknown',
             isCompleted: value['isCompleted'],
           ),
         );
@@ -39,7 +42,10 @@ class Assignment {
     return assignments;
   }
 
-  static Future<String?> addAssignment(String title) async {
+  static Future<String?> addAssignment(
+    String title,
+    String courseName,
+  ) async {
     final userId = _auth.currentUser?.uid;
     if (userId == null) return null;
 
@@ -47,12 +53,13 @@ class Assignment {
 
     await newRef.set({
       'title': title,
+      'courseName': courseName,
       'isCompleted': false,
     });
 
     return newRef.key;
   }
-
+  
   static Future<void> updateCompletionStatus(
     int index,
     List<Assignment> currentAssignments,

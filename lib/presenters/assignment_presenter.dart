@@ -13,11 +13,11 @@ class AssignmentPresenter {
       ..addAll(fetched);
   }
 
-  Future<void> addAssignment(String title) async {
-    final id = await Assignment.addAssignment(title);
+  Future<void> addAssignment(String title, String courseName) async {
+    final id = await Assignment.addAssignment(title, courseName);
     if (id == null) return;
 
-    _assignments.add(Assignment(id: id, title: title));
+    _assignments.add(Assignment(id: id, title: title, courseName: courseName,));
   }
 
   Future<void> toggleCompleted(int index) async {

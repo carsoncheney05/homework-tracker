@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../home_screen.dart';
-import '../../views/assignment_list_screen.dart';
+import 'assignment_list_screen.dart';
 import 'course_list_screen.dart';
 import 'profile_screen.dart';
 
